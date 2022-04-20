@@ -1,0 +1,52 @@
+{
+  "scripts": {
+    "start": "snowpack dev",
+    "test": "web-test-runner \"test/**/*.test.js\" --node-resolve",
+    "test:watch": "web-test-runner \"test/**/*.test.js\" --node-resolve --watch",
+    "build": "snowpack build",
+    "lint": "npm run lint:eslint && npm run lint:prettier",
+    "format": "npm run format:eslint && npm run format:prettier",
+    "lint:eslint": "eslint --ext .js,.html . --ignore-path .gitignore",
+    "format:eslint": "eslint --ext .js,.html . --fix --ignore-path .gitignore",
+    "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
+    "format:prettier": "prettier \"**/*.js\" --write --ignore-path .gitignore"
+  },
+  "dependencies": {
+    "lit": "^2.2.2"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^16.2.3",
+    "@commitlint/config-conventional": "^16.2.1",
+    "@open-wc/eslint-config": "^7.0.0",
+    "@open-wc/semantic-dom-diff": "^0.19.5",
+    "@open-wc/testing": "^3.0.0-next.5",
+    "@web/test-runner": "^0.13.27",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.5.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.8",
+    "prettier": "^2.6.2",
+    "snowpack": "^3.8.8"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@open-wc/eslint-config"
+    ]
+  },
+  "prettier": {
+    "singleQuote": true,
+    "arrowParens": "avoid"
+  },
+  "snowpack": {
+    "packageOptions": {
+      "exclude": ["**/node_modules/**/*"],
+      "external": [
+        "@web/test-runner-commands",
+        "@open-wc",
+        "axe-core",
+        "@esm-bundle",
+        "chai-a11y-axe"
+      ]
+    }
+  }
+}
