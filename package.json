@@ -15,6 +15,7 @@
     "lit": "^2.2.2"
   },
   "devDependencies": {
+    "@babel/eslint-plugin": "^7.17.7",
     "@commitlint/cli": "^16.2.3",
     "@commitlint/config-conventional": "^16.2.1",
     "@open-wc/eslint-config": "^7.0.0",
@@ -23,6 +24,13 @@
     "@web/test-runner": "^0.13.27",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-import-resolver-node": "^0.3.6",
+    "eslint-plugin-html": "latest",
+    "eslint-plugin-import": "latest",
+    "eslint-plugin-lit": "latest",
+    "eslint-plugin-lit-a11y": "latest",
+    "eslint-plugin-no-only-tests": "latest",
+    "eslint-plugin-wc": "latest",
     "husky": "^7.0.4",
     "lint-staged": "^12.3.8",
     "prettier": "^2.6.2",
