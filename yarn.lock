@@ -3409,7 +3409,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:~0.9.0":
+"esbuild@npm:^0.9.7, esbuild@npm:~0.9.0":
   version: 0.9.7
   resolution: "esbuild@npm:0.9.7"
   bin:
@@ -7294,6 +7294,7 @@ __metadata:
     "@open-wc/semantic-dom-diff": ^0.19.5
     "@open-wc/testing": ^3.0.0-next.5
     "@web/test-runner": ^0.13.27
+    esbuild: ^0.9.7
     eslint: ^7.32.0
     eslint-config-prettier: ^8.5.0
     eslint-import-resolver-node: ^0.3.6
