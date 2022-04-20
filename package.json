@@ -39,7 +39,9 @@
   },
   "snowpack": {
     "packageOptions": {
-      "exclude": ["**/node_modules/**/*"],
+      "exclude": [
+        "**/node_modules/**/*"
+      ],
       "external": [
         "@web/test-runner-commands",
         "@open-wc",
