@@ -17,8 +17,6 @@ to start a dev server, or
 * `yarn lint` to run the linter, or
 * `yarn format` to run the formatter.
 
-(c) 2022 OMICRON electronics GmbH
-
 ## License
 
 This project is licensed under the [Apache License 2.0](LICENSE).
