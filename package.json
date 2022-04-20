@@ -58,5 +58,14 @@
         "chai-a11y-axe"
       ]
     }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": ["eslint --fix", "prettier --write", "git add"],
+    "*.ts": ["eslint --fix", "prettier --write", "git add"]
   }
 }
