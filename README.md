@@ -4,7 +4,7 @@
 
 ### Building
 
-This project uses the [Yarn package manager](https://classic.yarnpkg.com/lang/en/docs/install/#debian-stable). Make sure you have it installed, then run:
+This project uses the [Yarn package manager](https://yarnpkg.com/getting-started/install). Make sure you have it installed, then run:
 
 ```sh
 yarn start
