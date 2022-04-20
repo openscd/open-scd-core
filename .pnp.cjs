@@ -4126,13 +4126,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["esbuild-windows-arm64", "npm:0.14.36"]
           ],
           "linkType": "HARD",
-        }],
-        ["npm:0.9.7", {
-          "packageLocation": "./.yarn/unplugged/esbuild-npm-0.9.7-6b1d054429/node_modules/esbuild/",
-          "packageDependencies": [
-            ["esbuild", "npm:0.9.7"]
-          ],
-          "linkType": "HARD",
         }]
       ]],
       ["esbuild-android-64", [
@@ -9014,7 +9007,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["default-browser-id", "npm:2.0.0"],
             ["detect-port", "npm:1.3.0"],
             ["es-module-lexer", "npm:0.3.26"],
-            ["esbuild", "npm:0.9.7"],
+            ["esbuild", "npm:0.14.36"],
             ["esinstall", "npm:1.1.7"],
             ["estree-walker", "npm:2.0.2"],
             ["etag", "npm:1.8.1"],

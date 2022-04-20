@@ -3620,15 +3620,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:~0.9.0":
-  version: 0.9.7
-  resolution: "esbuild@npm:0.9.7"
-  bin:
-    esbuild: bin/esbuild
-  checksum: fc2a33e46cf66747f9a4416a03ecd39adc353516b6972086d2633040221c9bb4d01cde409f6396d223517ac6fe73bbeea16b79109fcb283d0ed13e7ae7f04d42
-  languageName: node
-  linkType: hard
-
 "escalade@npm:^3.1.1":
   version: 3.1.1
   resolution: "escalade@npm:3.1.1"
