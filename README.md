@@ -1,0 +1,5 @@
+# OpenSCD Core
+
+## Contributing
+
+### Building
