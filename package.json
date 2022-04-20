@@ -48,6 +48,9 @@
     "arrowParens": "avoid"
   },
   "snowpack": {
+    "buildOptions": {
+      "cacheDirPath": ".cache/snowpack"
+    },
     "packageOptions": {
       "exclude": [
         "**/node_modules/**/*"
