@@ -1,5 +1,28 @@
 {
-  "name": "open-scd-core",
+  "name": "@openscd/open-scd-core",
+  "version": "0.0.1-rc1",
+  "description": "The core editor component of open-scd, without any extensions pre-installed.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openscd/open-scd-core.git"
+  },
+  "keywords": [
+    "scl",
+    "xml",
+    "iec",
+    "61850",
+    "iec61850",
+    "scd",
+    "openscd",
+    "compas"
+  ],
+  "author": "Christian Dinkel",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/openscd/open-scd-core/issues"
+  },
+  "homepage": "https://github.com/openscd/open-scd-core#readme",
   "packageManager": "yarn@3.1.1",
   "scripts": {
     "start": "snowpack dev",
