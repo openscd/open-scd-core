@@ -1,0 +1,26 @@
+name: Test
+on:
+  push:
+    branches-ignore:
+      -main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      -name: Checkout
+       uses: actions/checkout@v3
+      
+      -name: Set up Node.js
+       uses: actions/setup-node@v3
+       with: 
+        node-version: '16.x'
+      
+      -name: Activate yarn
+       run: corepack enable
+      
+      -name: Install dependencies
+       run: yarn install
+
+      -name: Run tests
+       run: yarn test
