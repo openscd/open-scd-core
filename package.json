@@ -39,7 +39,9 @@
     "husky": "^7.0.4",
     "lint-staged": "^12.3.8",
     "prettier": "^2.6.2",
-    "snowpack": "^3.8.8"
+    "snowpack": "^3.8.8",
+    "typedoc": "^0.22.17",
+    "typescript": "^4.7.2"
   },
   "resolutions": {
     "snowpack/esbuild": "0.14.36"
