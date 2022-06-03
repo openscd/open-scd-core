@@ -5,6 +5,7 @@
     "start": "snowpack dev",
     "test": "web-test-runner \"test/**/*.test.js\" --node-resolve",
     "test:watch": "web-test-runner \"test/**/*.test.js\" --node-resolve --watch",
+    "doc:typedoc": "typedoc --plugin none --out doc open-scd.ts",
     "build": "snowpack build",
     "lint": "npm run lint:eslint && npm run lint:prettier",
     "format": "npm run format:eslint && npm run format:prettier",
