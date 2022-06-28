@@ -8,3 +8,4 @@
 !.yarn/versions
 !.yarn/unplugged
 build
+node_modules
