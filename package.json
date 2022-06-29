@@ -1,9 +1,11 @@
 {
   "name": "open-scd-core",
-  "packageManager": "yarn@3.1.1",
+  "packageManager": "npm@8.12.2",
+  "type": "module",
   "scripts": {
     "start": "snowpack dev",
     "test": "web-test-runner \"test/**/*.test.js\" --node-resolve",
+    "test:update-visual-baseline": "web-test-runner \"test/**/*.test.js\" --node-resolve --update-visual-baseline",
     "test:watch": "web-test-runner \"test/**/*.test.js\" --node-resolve --watch",
     "build": "snowpack build",
     "lint": "npm run lint:eslint && npm run lint:prettier",
@@ -26,6 +28,7 @@
     "@open-wc/semantic-dom-diff": "^0.19.5",
     "@open-wc/testing": "^3.0.0-next.5",
     "@web/test-runner": "^0.13.27",
+    "@web/test-runner-visual-regression": "^0.6.5",
     "esbuild": "0.14.36",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.5.0",
