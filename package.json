@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "snowpack dev",
-    "test": "web-test-runner \"test/**/*.test.js\" --node-resolve",
+    "test": "npm run lint && web-test-runner \"test/**/*.test.js\" --node-resolve",
     "test:update-visual-baseline": "web-test-runner \"test/**/*.test.js\" --node-resolve --update-visual-baseline",
     "test:watch": "web-test-runner \"test/**/*.test.js\" --node-resolve --watch",
     "build": "snowpack build",
