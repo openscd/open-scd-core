@@ -1,8 +1,5 @@
 name: Test
-on:
-  push:
-    branches-ignore:
-      - main
+on: push
 
 jobs:
   test:
@@ -13,11 +10,11 @@ jobs:
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
-        with: 
-         node-version: '16'
+        with:
+          node-version: '16'
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run tests
-        run: npm run-script test 
+        run: npm run-script test
