@@ -50,9 +50,6 @@
     "typedoc": "^0.23.2",
     "typescript": "^4.7.4"
   },
-  "resolutions": {
-    "snowpack/esbuild": "0.14.36"
-  },
   "eslintConfig": {
     "extends": [
       "@open-wc/eslint-config"
@@ -71,6 +68,8 @@
         "**/node_modules/**/*"
       ],
       "external": [
+        "@web/dev-server-esbuild",
+        "@web/test-runner-visual-regression/plugin",
         "@web/test-runner-commands",
         "@open-wc",
         "axe-core",
