@@ -1,6 +1,6 @@
 import './editing-element.js';
 import { EditingElement } from './editing-element.js';
-import { newOpenDocEvent } from '../../src/foundation/open-doc.js';
+import { newActionEvent, newOpenDocEvent } from '../../src/foundation.js';
 import { html, fixture, expect } from '@open-wc/testing';
 
 describe('Editing Element', () => {
@@ -19,6 +19,15 @@ describe('Editing Element', () => {
 
   it('loads a document', () => {
     elm.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
-    expect(elm.docs['test.scd']).to.exist;
+    expect(elm.doc).to.equal(doc);
+  });
+
+  it('inserts an element on InsertActionEvent', () => {
+    elm.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
+    const node = doc.createElement('test');
+    elm.dispatchEvent(
+      newActionEvent({ parent: doc.documentElement, node, reference: null })
+    );
+    expect(doc.documentElement.querySelector('test')).to.exist;
   });
 });
