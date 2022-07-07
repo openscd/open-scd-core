@@ -11,13 +11,11 @@ export type OpenDocEvent = CustomEvent<OpenDocDetail>;
 export function newOpenDocEvent(
   doc: XMLDocument,
   docName: string,
-  eventInitDict?: CustomEventInit<Partial<OpenDocDetail>>
 ): OpenDocEvent {
   return new CustomEvent<OpenDocDetail>('open-doc', {
     bubbles: true,
     composed: true,
-    ...eventInitDict,
-    detail: { doc, docName, ...eventInitDict?.detail },
+    detail: { doc, docName },
   });
 }
 
