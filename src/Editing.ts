@@ -1,8 +1,5 @@
 import { property } from 'lit/decorators.js';
-import {
-  LitElementConstructor,
-  OpenDocEvent,
-} from './foundation';
+import { LitElementConstructor, OpenDocEvent } from './foundation.js';
 
 /** @typeParam TBase - a type extending `LitElement`
  * @returns `Base` with an `XMLDocument` property "`doc`" and an event listener
