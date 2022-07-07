@@ -10,7 +10,7 @@ export type OpenDocEvent = CustomEvent<OpenDocDetail>;
 /** @returns a new [[OpenDocEvent]] */
 export function newOpenDocEvent(
   doc: XMLDocument,
-  docName: string,
+  docName: string
 ): OpenDocEvent {
   return new CustomEvent<OpenDocDetail>('open-doc', {
     bubbles: true,
