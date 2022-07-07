@@ -7,7 +7,7 @@
     "test": "npm run lint && web-test-runner \"test/**/*.test.ts\" --node-resolve --coverage",
     "test:update-visual-baseline": "web-test-runner \"test/**/*.test.ts\" --node-resolve --update-visual-baseline",
     "test:watch": "web-test-runner \"test/**/*.test.ts\" --node-resolve --watch  --coverage",
-    "doc:typedoc": "typedoc --plugin none --out doc open-scd.ts",
+    "doc": "typedoc --plugin none --out doc open-scd.ts",
     "build": "snowpack build",
     "lint": "npm run lint:eslint && npm run lint:prettier",
     "format": "npm run format:eslint && npm run format:prettier",
