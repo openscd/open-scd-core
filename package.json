@@ -4,9 +4,9 @@
   "type": "module",
   "scripts": {
     "start": "snowpack dev",
-    "test": "npm run lint && web-test-runner \"test/**/*.test.ts\" --node-resolve",
+    "test": "npm run lint && web-test-runner \"test/**/*.test.ts\" --node-resolve --coverage",
     "test:update-visual-baseline": "web-test-runner \"test/**/*.test.ts\" --node-resolve --update-visual-baseline",
-    "test:watch": "web-test-runner \"test/**/*.test.ts\" --node-resolve --watch",
+    "test:watch": "web-test-runner \"test/**/*.test.ts\" --node-resolve --watch  --coverage",
     "doc:typedoc": "typedoc --plugin none --out doc open-scd.ts",
     "build": "snowpack build",
     "lint": "npm run lint:eslint && npm run lint:prettier",
