@@ -1,31 +1,34 @@
-import '../editing-element.js';
-import { EditingElement } from '../editing-element.js';
-import { newActionEvent, newOpenDocEvent } from '../../src/foundation.js';
 import { html, fixture, expect } from '@open-wc/testing';
 
+import { newActionEvent, newOpenDocEvent } from '../../src/foundation.js';
+
+import '../editing-element.js';
+import { EditingElement } from '../editing-element.js';
+
 describe('Editing Element', () => {
-  let elm: EditingElement;
+  let editor: EditingElement;
   const doc = new DOMParser().parseFromString(
     `<?xml version="1.0" encoding="UTF-8"?>
-      <SCL version="2007" revision="B" xmlns:sxy="http://www.iec.ch/61850/2003/SCLcoordinates" xmlns="http://www.iec.ch/61850/2003/SCL" xmlns:txy="http://www.iec.ch/61850/2003/Terminal" xmlns:scl="http://www.iec.ch/61850/2003/SCL" xsi:schemaLocation="http://www.iec.ch/61850/2003/SCL SCL.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:IEC_60870_5_104="http://www.iec.ch/61850-80-1/2007/SCL">
+      <SCL version="2007" revision="B" xmlns="http://www.iec.ch/61850/2003/SCL">
+        <Substation name="A1" desc="test substation"></Substation>
       </SCL>`,
     'application/xml'
   );
   beforeEach(async () => {
-    elm = <EditingElement>(
+    editor = <EditingElement>(
       await fixture(html`<editing-element></editing-element>`)
     );
   });
 
-  it('loads a document', () => {
-    elm.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
-    expect(elm.doc).to.equal(doc);
+  it('loads a document on OpenDocEvent', () => {
+    editor.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
+    expect(editor.doc).to.equal(doc);
   });
 
   it('inserts an element on InsertActionEvent', () => {
-    elm.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
+    editor.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
     const node = doc.createElement('test');
-    elm.dispatchEvent(
+    editor.dispatchEvent(
       newActionEvent({ parent: doc.documentElement, node, reference: null })
     );
     expect(doc.documentElement.querySelector('test')).to.exist;

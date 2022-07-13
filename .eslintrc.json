@@ -16,6 +16,7 @@
       "import/named": "off",
       "import/no-unresolved": "off",
       "import/extensions": ["error", "always", { "ignorePackages": true }],
+      "eol-last": ["error", "always"],
       "import/no-duplicates": "off",
       "no-duplicate-imports": "off",
       "tsdoc/syntax": "warn"
