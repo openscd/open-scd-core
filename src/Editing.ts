@@ -33,6 +33,7 @@ export function Editing<TBase extends LitElementConstructor>(Base: TBase) {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(...args: any[]) {
       super(...args);
 
