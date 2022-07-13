@@ -33,4 +33,14 @@ describe('Editing Element', () => {
     );
     expect(doc.documentElement.querySelector('test')).to.exist;
   });
+
+  it("updates an element's attributes on UpdateActionEvent", () => {
+    editor.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
+    const element = doc.querySelector('Substation')!;
+    editor.dispatchEvent(
+      newActionEvent({ element, attributes: { name: 'A2', desc: null } })
+    );
+    expect(element).to.have.attribute('name', 'A2');
+    expect(element).to.not.have.attribute('desc');
+  });
 });

@@ -4,6 +4,9 @@ import {
   OpenDocEvent,
   EditorActionEvent,
   isInsert,
+  isUpdate,
+  Insert,
+  Update,
 } from './foundation.js';
 
 /** @typeParam TBase - a type extending `LitElement`
@@ -25,12 +28,21 @@ export function Editing<TBase extends LitElementConstructor>(Base: TBase) {
       this.docs[this.docName] = event.detail.doc;
     }
 
+    private onInsertAction(action: Insert) {
+      action.parent.insertBefore(action.node, action.reference ?? null);
+    }
+
+    private onUpdateAction(action: Update) {
+      for (const [attribute, value] of Object.entries(action.attributes))
+        if (value === null) action.element.removeAttribute(attribute);
+        else if (value !== undefined)
+          action.element.setAttribute(attribute, value);
+    }
+
     private onEditorAction(event: EditorActionEvent) {
       const action = event.detail;
-      if (isInsert(action)) {
-        action.parent.insertBefore(action.node, action.reference ?? null);
-      }
-      return;
+      if (isInsert(action)) this.onInsertAction(action);
+      else if (isUpdate(action)) this.onUpdateAction(action);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
