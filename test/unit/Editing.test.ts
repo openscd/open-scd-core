@@ -25,7 +25,7 @@ describe('Editing Element', () => {
     expect(editor.doc).to.equal(doc);
   });
 
-  it('inserts an element on InsertActionEvent', () => {
+  it('inserts an element on Insert Action', () => {
     editor.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
     const node = doc.createElement('test');
     editor.dispatchEvent(
@@ -34,7 +34,7 @@ describe('Editing Element', () => {
     expect(doc.documentElement.querySelector('test')).to.exist;
   });
 
-  it("updates an element's attributes on UpdateActionEvent", async () => {
+  it("updates an element's attributes on Update Action", async () => {
     editor.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
     const element = doc.querySelector('Substation')!;
     editor.dispatchEvent(
@@ -43,5 +43,12 @@ describe('Editing Element', () => {
     expect(element).to.have.attribute('name', 'A2');
     expect(element).to.not.have.attribute('desc');
     await expect(element).dom.to.equalSnapshot();
+  });
+
+  it('removes an element on Remove Action', () => {
+    editor.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
+    const node = doc.querySelector('Substation')!;
+    editor.dispatchEvent(newActionEvent({ node }));
+    expect(doc.querySelector('Substation')).to.not.exist;
   });
 });
