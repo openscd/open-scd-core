@@ -1,5 +1,5 @@
-import './editing-element.js';
-import { EditingElement } from './editing-element.js';
+import '../editing-element.js';
+import { EditingElement } from '../editing-element.js';
 import { newActionEvent, newOpenDocEvent } from '../../src/foundation.js';
 import { html, fixture, expect } from '@open-wc/testing';
 
