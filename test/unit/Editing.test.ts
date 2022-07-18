@@ -9,8 +9,8 @@ describe('Editing Element', () => {
   let editor: EditingElement;
   const doc = new DOMParser().parseFromString(
     `<?xml version="1.0" encoding="UTF-8"?>
-      <SCL version="2007" revision="B" xmlns="http://www.iec.ch/61850/2003/SCL">
-        <Substation name="A1" desc="test substation"></Substation>
+      <SCL version="2007" revision="B" xmlns="http://www.iec.ch/61850/2003/SCL" xmlns:sxy="http://www.iec.ch/61850/2003/SCLcoordinates">
+        <Substation name="A1" desc="test substation" sxy:x="1" sxy:y="1"></Substation>
       </SCL>`,
     'application/xml'
   );
