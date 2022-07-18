@@ -34,7 +34,7 @@ describe('Editing Element', () => {
     expect(doc.documentElement.querySelector('test')).to.exist;
   });
 
-  it("updates an element's attributes on UpdateActionEvent", () => {
+  it("updates an element's attributes on UpdateActionEvent", async () => {
     editor.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
     const element = doc.querySelector('Substation')!;
     editor.dispatchEvent(
@@ -42,5 +42,6 @@ describe('Editing Element', () => {
     );
     expect(element).to.have.attribute('name', 'A2');
     expect(element).to.not.have.attribute('desc');
+    await expect(element).shadowDom.to.equalSnapshot();
   });
 });
