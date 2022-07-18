@@ -25,7 +25,12 @@ export function isInsert(action: EditorAction): action is Insert {
   return (action as Insert).parent !== undefined;
 }
 
-export type EditorActionEvent = CustomEvent<EditorAction>;
+export function isUpdate(action: EditorAction): action is Update {
+  return (action as Update).element !== undefined;
+}
+
+export type EditorActionEvent<E extends EditorAction = EditorAction> =
+  CustomEvent<E>;
 
 export function newActionEvent(action: EditorAction): EditorActionEvent {
   return new CustomEvent<EditorAction>('editor-action', {
