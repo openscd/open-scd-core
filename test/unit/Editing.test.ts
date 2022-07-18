@@ -42,6 +42,6 @@ describe('Editing Element', () => {
     );
     expect(element).to.have.attribute('name', 'A2');
     expect(element).to.not.have.attribute('desc');
-    await expect(element).shadowDom.to.equalSnapshot();
+    await expect(element).dom.to.equalSnapshot();
   });
 });
