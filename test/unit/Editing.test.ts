@@ -51,4 +51,11 @@ describe('Editing Element', () => {
     editor.dispatchEvent(newActionEvent({ node }));
     expect(doc.querySelector('Substation')).to.not.exist;
   });
+
+  it('removes an element on Remove Action', () => {
+    editor.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
+    const node = doc.querySelector('Substation')!;
+    editor.dispatchEvent(newActionEvent({ node }));
+    expect(doc.querySelector('Substation')).to.not.exist;
+  });
 });
