@@ -11,6 +11,11 @@ describe('Editing Element', () => {
     `<?xml version="1.0" encoding="UTF-8"?>
       <SCL version="2007" revision="B" xmlns="http://www.iec.ch/61850/2003/SCL" xmlns:sxy="http://www.iec.ch/61850/2003/SCLcoordinates">
         <Substation name="A1" desc="test substation" sxy:x="1" sxy:y="1"></Substation>
+        TextNode
+        <Communication>
+          <SubNetwork name="NONE" type="8-MMS">
+          </SubNetwork>
+        </Communication>
       </SCL>`,
     'application/xml'
   );
@@ -45,17 +50,12 @@ describe('Editing Element', () => {
     await expect(element).dom.to.equalSnapshot();
   });
 
-  it('removes an element on Remove Action', () => {
+  it('removes an element on Remove Action', async () => {
+    const element = doc.querySelector('SCL')!;
     editor.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
     const node = doc.querySelector('Substation')!;
     editor.dispatchEvent(newActionEvent({ node }));
     expect(doc.querySelector('Substation')).to.not.exist;
-  });
-
-  it('removes an element on Remove Action', () => {
-    editor.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
-    const node = doc.querySelector('Substation')!;
-    editor.dispatchEvent(newActionEvent({ node }));
-    expect(doc.querySelector('Substation')).to.not.exist;
+    await expect(element).dom.to.equalSnapshot();
   });
 });
