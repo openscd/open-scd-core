@@ -1,7 +1,7 @@
 # Contributing to OpenSCD Core
 Thanks for showing interest in contributing to the OpenSCD Core project 🤝 
 
-
+This project uses [Lit](https://lit.dev/docs/), a powerful library for developing reactive web components in a declarative fashion. It is recommended to take a look at their documentation and tutorials before jumping right into the code. Make sure to take look at their implementation of [Mixins](https://lit.dev/docs/composition/mixins/) as well.
 
 ## Github Actions
 As part of our CI pipeline (both upon code being pushed into a remote branch and whenever a pull-request is created) we clean-install the project's dependency packages, then run `prettier` and `eslint` to find wrongly formatted code or undesired patterns. Finally unit and visual-regression tests are run by using [@web/test-runner](https://modern-web.dev/docs/test-runner/overview/) and [@web/test-runner-visual-regression](https://github.com/modernweb-dev/web/tree/master/packages/test-runner-visual-regression). Make sure that all checks are passing before marking your PR as 'Ready for review'.
