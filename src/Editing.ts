@@ -5,8 +5,10 @@ import {
   EditorActionEvent,
   isInsert,
   isUpdate,
+  isRemove,
   Insert,
   Update,
+  Remove,
 } from './foundation.js';
 
 /** @typeParam TBase - a type extending `LitElement`
@@ -39,10 +41,15 @@ export function Editing<TBase extends LitElementConstructor>(Base: TBase) {
           action.element.setAttribute(attribute, value);
     }
 
+    private onRemoveAction(action: Remove) {
+      action.node.parentNode?.removeChild(action.node);
+    }
+
     private onEditorAction(event: EditorActionEvent) {
       const action = event.detail;
       if (isInsert(action)) this.onInsertAction(action);
       else if (isUpdate(action)) this.onUpdateAction(action);
+      else if (isRemove(action)) this.onRemoveAction(action);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

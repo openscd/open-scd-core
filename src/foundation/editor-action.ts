@@ -29,6 +29,13 @@ export function isUpdate(action: EditorAction): action is Update {
   return (action as Update).element !== undefined;
 }
 
+export function isRemove(action: EditorAction): action is Remove {
+  return (
+    (action as Insert).parent === undefined &&
+    (action as Remove).node !== undefined
+  );
+}
+
 export type EditorActionEvent<E extends EditorAction = EditorAction> =
   CustomEvent<E>;
 

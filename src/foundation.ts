@@ -11,9 +11,11 @@ export {
   newActionEvent,
   isInsert,
   isUpdate,
+  isRemove,
 } from './foundation/editor-action.js';
 export type {
   EditorActionEvent,
   Insert,
   Update,
+  Remove,
 } from './foundation/editor-action.js';
