@@ -6,3 +6,15 @@ export type LitElementConstructor = new (...args: any[]) => LitElement;
 
 export { newOpenDocEvent } from './foundation/open-doc.js';
 export type { OpenDocEvent, OpenDocDetail } from './foundation/open-doc.js';
+
+export {
+  newActionEvent,
+  isInsert,
+  isUpdate,
+} from './foundation/editor-action.js';
+export type {
+  EditorActionEvent,
+  EditorAction,
+  Insert,
+  Update,
+} from './foundation/editor-action.js';
