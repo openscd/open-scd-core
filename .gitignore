@@ -1,11 +1,11 @@
-.cache
-.yarn/*
-!.yarn/cache
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-!.yarn/unplugged
-build
-node_modules
+## npm
+/node_modules/
+/npm-debug.log
+
+## testing
+/coverage/
+
+# build
+/dist
+/custom-elements.json
+/.tsbuildinfo
