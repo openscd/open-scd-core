@@ -4,16 +4,25 @@ import {
   OpenDocEvent,
   EditorActionEvent,
   isInsert,
+  isUpdate,
   Insert,
+  Update,
 } from '../foundation.js';
 
 function onInsertAction(action: Insert) {
   action.parent.insertBefore(action.node, action.reference);
 }
 
+function onUpdateAction(action: Update) {
+  for (const [attribute, value] of Object.entries(action.attributes))
+    if (value === null) action.element.removeAttribute(attribute);
+    else if (value !== undefined) action.element.setAttribute(attribute, value);
+}
+
 function onEditorAction(event: EditorActionEvent) {
   const action = event.detail;
   if (isInsert(action)) onInsertAction(action);
+  else if (isUpdate(action)) onUpdateAction(action);
 }
 
 /** A mixin for editing a set of [[docs]] using [[EditorActionEvent]]s */
