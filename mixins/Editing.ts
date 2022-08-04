@@ -1,5 +1,20 @@
 import { property } from 'lit/decorators.js';
-import { LitElementConstructor, OpenDocEvent } from '../foundation.js';
+import {
+  LitElementConstructor,
+  OpenDocEvent,
+  EditorActionEvent,
+  isInsert,
+  Insert,
+} from '../foundation.js';
+
+function onInsertAction(action: Insert) {
+  action.parent.insertBefore(action.node, action.reference);
+}
+
+function onEditorAction(event: EditorActionEvent) {
+  const action = event.detail;
+  if (isInsert(action)) onInsertAction(action);
+}
 
 /** A mixin for editing a set of [[docs]] using [[EditorActionEvent]]s */
 export function Editing<TBase extends LitElementConstructor>(Base: TBase) {
@@ -26,6 +41,7 @@ export function Editing<TBase extends LitElementConstructor>(Base: TBase) {
       super(...args);
 
       this.addEventListener('open-doc', this.onOpenDoc);
+      this.addEventListener('editor-action', onEditorAction);
     }
   }
   return EditingElement;
