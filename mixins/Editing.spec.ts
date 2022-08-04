@@ -3,7 +3,7 @@ import { LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
 import { Editing } from './Editing.js';
-import { newOpenDocEvent } from '../foundation.js';
+import { newActionEvent, newOpenDocEvent } from '../foundation.js';
 
 @customElement('editing-element')
 class EditingElement extends Editing(LitElement) {}
@@ -28,5 +28,22 @@ describe('Editing Element', () => {
     await editor.updateComplete;
     expect(editor.doc).to.equal(doc);
     expect(editor.docName).to.equal('test.scd');
+  });
+
+  describe('given a loaded document', () => {
+    beforeEach(() => {
+      editor.dispatchEvent(newOpenDocEvent(doc, 'test.scd'));
+    });
+
+    it('inserts an element on InsertActionEvent', () => {
+      const parent = doc.documentElement;
+      const node = doc.createElement('test');
+      const reference = doc.querySelector('Substation');
+      editor.dispatchEvent(newActionEvent({ parent, node, reference }));
+      expect(doc.documentElement.querySelector('test')).to.have.property(
+        'nextSibling',
+        reference
+      );
+    });
   });
 });
