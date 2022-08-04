@@ -18,5 +18,5 @@
     "declaration": false,
     "incremental": true
   },
-  "include": ["*.ts"]
+  "include": ["**/*.ts"]
 }
