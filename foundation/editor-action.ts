@@ -11,8 +11,13 @@ export type Update = {
   attributes: Partial<Record<string, string | null>>;
 };
 
+/** Represents the intent to remove a node from its ownerDocument. */
+export type Remove = {
+  node: Node;
+};
+
 /** Represents the user's intent to change an XMLDocument. */
-export type EditorAction = Insert | Update;
+export type EditorAction = Insert | Update | Remove;
 
 export function isInsert(action: EditorAction): action is Insert {
   return (action as Insert).parent !== undefined;
@@ -20,6 +25,13 @@ export function isInsert(action: EditorAction): action is Insert {
 
 export function isUpdate(action: EditorAction): action is Update {
   return (action as Update).element !== undefined;
+}
+
+export function isRemove(action: EditorAction): action is Remove {
+  return (
+    (action as Insert).parent === undefined &&
+    (action as Remove).node !== undefined
+  );
 }
 
 export type EditorActionEvent<E extends EditorAction = EditorAction> =
