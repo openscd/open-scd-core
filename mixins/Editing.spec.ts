@@ -55,5 +55,11 @@ describe('Editing Element', () => {
       expect(element).to.have.attribute('name', 'A2');
       expect(element).to.not.have.attribute('desc');
     });
+
+    it('removes an element on Remove Action', async () => {
+      const node = doc.querySelector('Substation')!;
+      editor.dispatchEvent(newActionEvent({ node }));
+      expect(doc.querySelector('Substation')).to.not.exist;
+    });
   });
 });

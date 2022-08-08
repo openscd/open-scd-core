@@ -5,8 +5,10 @@ import {
   EditorActionEvent,
   isInsert,
   isUpdate,
+  isRemove,
   Insert,
   Update,
+  Remove,
 } from '../foundation.js';
 
 function onInsertAction(action: Insert) {
@@ -19,10 +21,15 @@ function onUpdateAction(action: Update) {
     else if (value !== undefined) action.element.setAttribute(attribute, value);
 }
 
+function onRemoveAction(action: Remove) {
+  action.node.parentNode?.removeChild(action.node);
+}
+
 function onEditorAction(event: EditorActionEvent) {
   const action = event.detail;
   if (isInsert(action)) onInsertAction(action);
   else if (isUpdate(action)) onUpdateAction(action);
+  else if (isRemove(action)) onRemoveAction(action);
 }
 
 /** A mixin for editing a set of [[docs]] using [[EditorActionEvent]]s */
