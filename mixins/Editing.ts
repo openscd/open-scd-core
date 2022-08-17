@@ -2,7 +2,7 @@ import { property } from 'lit/decorators.js';
 import {
   LitElementConstructor,
   OpenDocEvent,
-  EditorActionEvent,
+  EditorAction,
   isInsert,
   isUpdate,
   isRemove,
@@ -11,22 +11,30 @@ import {
   Remove,
 } from '../foundation.js';
 
-function onInsertAction(action: Insert) {
-  action.parent.insertBefore(action.node, action.reference);
+function onInsertAction({ parent, node, reference }: Insert) {
+  try {
+    parent.insertBefore(node, reference);
+  } catch (e) {
+    // do nothing if insert doesn't work on these nodes
+  }
 }
 
-function onUpdateAction(action: Update) {
-  for (const [attribute, value] of Object.entries(action.attributes))
-    if (value === null) action.element.removeAttribute(attribute);
-    else if (value !== undefined) action.element.setAttribute(attribute, value);
+function onUpdateAction({ element, attributes }: Update) {
+  // const ns = element.namespaceURI;
+  for (const [attribute, value] of Object.entries(attributes))
+    try {
+      if (value === null) element.removeAttribute(attribute);
+      else if (value !== undefined) element.setAttribute(attribute, value);
+    } catch (e) {
+      // do nothing if update doesn't work on this element / these attributes
+    }
 }
 
-function onRemoveAction(action: Remove) {
-  action.node.parentNode?.removeChild(action.node);
+function onRemoveAction({ node }: Remove) {
+  node.parentNode?.removeChild(node);
 }
 
-function onEditorAction(event: EditorActionEvent) {
-  const action = event.detail;
+function onEditorAction(action: EditorAction) {
   if (isInsert(action)) onInsertAction(action);
   else if (isUpdate(action)) onUpdateAction(action);
   else if (isRemove(action)) onRemoveAction(action);
@@ -47,9 +55,9 @@ export function Editing<TBase extends LitElementConstructor>(Base: TBase) {
     /** The name of the [[`doc`]] currently being edited */
     @property({ type: String }) docName = '';
 
-    private onOpenDoc(event: OpenDocEvent) {
-      this.docName = event.detail.docName;
-      this.docs[this.docName] = event.detail.doc;
+    private onOpenDoc({ detail: { docName, doc } }: OpenDocEvent) {
+      this.docName = docName;
+      this.docs[this.docName] = doc;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,7 +65,9 @@ export function Editing<TBase extends LitElementConstructor>(Base: TBase) {
       super(...args);
 
       this.addEventListener('open-doc', this.onOpenDoc);
-      this.addEventListener('editor-action', onEditorAction);
+      this.addEventListener('editor-action', ({ detail }) =>
+        onEditorAction(detail)
+      );
     }
   }
   return EditingElement;
