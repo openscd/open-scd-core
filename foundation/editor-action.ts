@@ -5,10 +5,15 @@ export type Insert = {
   reference: Node | null;
 };
 
+export type NamespacedAttributeValue = {
+  value: string | null;
+  namespaceURI: string | null;
+};
+export type AttributeValue = string | null | NamespacedAttributeValue;
 /** Represents the intent to set or remove (if null) attributes on element. */
 export type Update = {
   element: Element;
-  attributes: Partial<Record<string, string | null>>;
+  attributes: Partial<Record<string, AttributeValue>>;
 };
 
 /** Represents the intent to remove a node from its ownerDocument. */
@@ -23,6 +28,11 @@ export function isInsert(action: EditorAction): action is Insert {
   return (action as Insert).parent !== undefined;
 }
 
+export function isNamespaced(
+  value: AttributeValue
+): value is NamespacedAttributeValue {
+  return value !== null && typeof value !== 'string';
+}
 export function isUpdate(action: EditorAction): action is Update {
   return (action as Update).element !== undefined;
 }

@@ -4,7 +4,6 @@ import { customElement } from 'lit/decorators.js';
 import {
   Arbitrary,
   assert,
-  configureGlobal,
   constant,
   constantFrom,
   dictionary,
@@ -12,16 +11,21 @@ import {
   property,
   record,
   string as fcString,
+  stringOf,
   tuple,
+  unicode,
+  webUrl,
 } from 'fast-check';
 
 import { Editing } from './Editing.js';
 import {
   Insert,
-  Update,
-  Remove,
+  isNamespaced,
+  NamespacedAttributeValue,
   newActionEvent,
   newOpenDocEvent,
+  Remove,
+  Update,
 } from '../foundation.js';
 
 const sclDocString = `<?xml version="1.0" encoding="UTF-8"?>
@@ -101,11 +105,9 @@ describe('Editing Element', () => {
     expect(sclDoc.querySelector('Substation')).to.not.exist;
   });
 
-  describe('always correctly', () => {
-    configureGlobal({ numRuns: 500 }); // default 100
-
+  describe('generally', () => {
     const xmlAttributeName =
-      /^(?!xml|Xml|xMl|xmL|XMl|xML|XmL|XML)[A-Za-z_][A-Za-z0-9-_.]*$/;
+      /^(?!xml|Xml|xMl|xmL|XMl|xML|XmL|XML)[A-Za-z_][A-Za-z0-9-_.]*(:[A-Za-z_][A-Za-z0-9-_.]*)?$/;
 
     function descendants(parent: Element | XMLDocument): Node[] {
       return (Array.from(parent.childNodes) as Node[]).concat(
@@ -138,6 +140,22 @@ describe('Editing Element', () => {
       const node = constantFrom(...nodes);
       const reference = constantFrom(...references);
       return record({ parent, node, reference });
+    }
+
+    const namespacedValue = record({
+      value: oneof(stringOf(oneof(unicode(), constant(':'))), constant(null)),
+      namespaceURI: oneof(webUrl(), constant(null)),
+    });
+
+    function namespacedUpdate(nodes: Node[]): Arbitrary<Update> {
+      const element = <Arbitrary<Element>>(
+        constantFrom(...nodes.filter(nd => nd.nodeType === Node.ELEMENT_NODE))
+      );
+      const attributes = dictionary(
+        fcString(),
+        oneof(fcString(), constant(null), namespacedValue)
+      );
+      return record({ element, attributes });
     }
 
     function update(nodes: Node[]): Arbitrary<Update> {
@@ -204,16 +222,46 @@ describe('Editing Element', () => {
       );
     });
 
-    it("updates elements' attributes on Update action events", () => {
+    it('updates default namespace attributes on Update action events', () => {
       assert(
         property(
           testDocs.chain(([{ nodes }]) => update(nodes)),
           action => {
             editor.dispatchEvent(newActionEvent(action));
             return Object.entries(action.attributes)
-              .filter(([name]) => xmlAttributeName.test(name))
+              .filter(
+                ([name]) => name !== '__proto__' && xmlAttributeName.test(name)
+              )
               .every(
                 ([name, value]) => action.element.getAttribute(name) === value
+              );
+          }
+        )
+      );
+    });
+
+    it('updates namespaced attributes on Update action events', () => {
+      assert(
+        property(
+          testDocs.chain(([{ nodes }]) => namespacedUpdate(nodes)),
+          action => {
+            editor.dispatchEvent(newActionEvent(action));
+            return Object.entries(action.attributes)
+              .filter(
+                ([name, value]) =>
+                  name !== '__proto__' &&
+                  xmlAttributeName.test(name) &&
+                  isNamespaced(value!) &&
+                  value.namespaceURI &&
+                  name.includes(':')
+              )
+              .map(entry => entry as [string, NamespacedAttributeValue])
+              .every(
+                ([name, { value, namespaceURI }]) =>
+                  action.element.getAttributeNS(
+                    <string>namespaceURI,
+                    <string>name.split(':', 2)[1]
+                  ) === value
               );
           }
         )

@@ -1,14 +1,16 @@
 import { property } from 'lit/decorators.js';
 import {
-  LitElementConstructor,
-  OpenDocEvent,
+  AttributeValue,
   EditorAction,
   isInsert,
+  isNamespaced,
   isUpdate,
   isRemove,
   Insert,
-  Update,
+  LitElementConstructor,
+  OpenDocEvent,
   Remove,
+  Update,
 } from '../foundation.js';
 
 function onInsertAction({ parent, node, reference }: Insert) {
@@ -20,14 +22,20 @@ function onInsertAction({ parent, node, reference }: Insert) {
 }
 
 function onUpdateAction({ element, attributes }: Update) {
-  // const ns = element.namespaceURI;
-  for (const [attribute, value] of Object.entries(attributes))
-    try {
-      if (value === null) element.removeAttribute(attribute);
-      else if (value !== undefined) element.setAttribute(attribute, value);
-    } catch (e) {
-      // do nothing if update doesn't work on this element / these attributes
-    }
+  for (const entry of Object.entries(attributes))
+    if (entry[0] !== '__proto__')
+      try {
+        const [attribute, value] = entry as [string, AttributeValue];
+        if (isNamespaced(value)) {
+          if (value.value === null)
+            element.removeAttributeNS(value.namespaceURI, attribute);
+          else
+            element.setAttributeNS(value.namespaceURI, attribute, value.value);
+        } else if (value === null) element.removeAttribute(attribute);
+        else element.setAttribute(attribute, value);
+      } catch (e) {
+        // do nothing if update doesn't work on this element / these attributes
+      }
 }
 
 function onRemoveAction({ node }: Remove) {

@@ -56,8 +56,9 @@
     "rules": {
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": [
-        "error"
-      ],
+        "error", { "destructuredArrayIgnorePattern": "^_" }
+      ]
+      ,
       "import/no-unresolved": "off",
       "import/extensions": [
         "error",
