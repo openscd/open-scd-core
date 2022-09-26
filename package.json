@@ -1,12 +1,36 @@
 {
-  "name": "open-scd-core",
-  "version": "0.0.0",
+  "name": "@openscd/open-scd-core",
+  "version": "0.0.1-rc2.8",
+  "description": "The core editor component of open-scd, without any extensions pre-installed.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openscd/open-scd-core.git"
+  },
+  "keywords": [
+    "scl",
+    "xml",
+    "iec",
+    "61850",
+    "iec61850",
+    "scd",
+    "openscd"
+  ],
+  "author": "OMICRON Electronics GmbH",
+  "contributors": [
+    "Christian Dinkel <christian.dinkel@omicronenergy.com>"
+  ],
   "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/openscd/open-scd-core/issues"
+  },
+  "homepage": "https://github.com/openscd/open-scd-core#readme",
   "packageManager": "npm@8.12.2",
   "type": "module",
+  "browser": "./foundation.js",
+  "main": "./foundation.js",
   "exports": {
-    ".": "dist/foundation.js",
-    "/open-scd.js": "dist/open-scd.js"
+    ".": "./foundation.js",
+    "./open-scd.js": "./open-scd.js"
   },
   "scripts": {
     "start": "npm run build && concurrently -k -r \"tsc -b --watch --preserveWatchOutput\" \"wds\"",
@@ -16,7 +40,7 @@
     "analyze": "cem analyze --litelement",
     "build": "npm run extract && npm run localize && npm run compile",
     "compile": "tsc -b && tsc foundation.ts --declaration --emitDeclarationOnly --outDir dist",
-    "doc": "npm run analyze -- --exclude dist && typedoc --out dist/doc foundation.ts",
+    "doc": "npm run analyze -- --exclude dist && typedoc --out doc foundation.ts",
     "prepublish": "npm run lint && npm run build && npm run doc",
     "lint": "eslint --ext .ts,.html . --ignore-path .gitignore && prettier \"**/*.ts\" --check --ignore-path .gitignore",
     "format": "eslint --ext .ts,.html . --fix --ignore-path .gitignore && prettier \"**/*.ts\" --write --ignore-path .gitignore",
