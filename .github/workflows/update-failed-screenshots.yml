@@ -1,0 +1,33 @@
+name: Update Screenshots
+
+on: workflow_dispatch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run-script test
+
+      - name: Check for failed screenshots
+        id: check-screenshots
+        if: failure()
+        run: echo "failed_screenshots=$(ls -1 screenshots/*/failed | wc -l)" >> $GITHUB_OUTPUT
+
+      - name: Upload failed screenshots as artifacts
+        uses: actions/upload-artifact@v3
+        if: failure() && steps.check-screenshots.outputs.failed_screenshots > 0
+        with:
+          name: failed_screenshots
+          path: screenshots/*/failed/
