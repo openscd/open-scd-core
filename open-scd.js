@@ -9153,7 +9153,8 @@ function Plugging(Base) {
                 __classPrivateFieldGet(this, _PluggingElement_loadedPlugins, "f").set(tagName, plugin);
                 if (customElements.get(tagName))
                     return;
-                import(plugin.src).then(mod => customElements.define(tagName, mod.default));
+                const url = new URL(plugin.src, window.location.origin).toString();
+                import(url).then(mod => customElements.define(tagName, mod.default));
             }));
             __classPrivateFieldSet(this, _PluggingElement_plugins, { menu: [], editor: [], ...plugins }, "f");
             this.requestUpdate();
