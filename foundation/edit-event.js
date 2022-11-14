@@ -1,23 +1,25 @@
-export function isComplex(edit) {
+function isComplex(edit) {
     return edit instanceof Array;
 }
-export function isInsert(edit) {
+function isInsert(edit) {
     return edit.parent !== undefined;
 }
-export function isNamespaced(value) {
+function isNamespaced(value) {
     return value !== null && typeof value !== 'string';
 }
-export function isUpdate(edit) {
+function isUpdate(edit) {
     return edit.element !== undefined;
 }
-export function isRemove(edit) {
+function isRemove(edit) {
     return (edit.parent === undefined && edit.node !== undefined);
 }
-export function newEditEvent(edit) {
+function newEditEvent(edit) {
     return new CustomEvent('oscd-edit', {
         composed: true,
         bubbles: true,
         detail: edit,
     });
 }
+
+export { isComplex, isInsert, isNamespaced, isRemove, isUpdate, newEditEvent };
 //# sourceMappingURL=edit-event.js.map
