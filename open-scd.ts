@@ -22,6 +22,7 @@ import { isComplex, isInsert, isRemove, isUpdate } from './foundation.js';
 
 import { Editing, LogEntry } from './mixins/Editing.js';
 import { Plugging, pluginTag } from './mixins/Plugging.js';
+import { Configurating } from './mixins/Configurating.js';
 
 type Control = {
   icon: string;
@@ -79,7 +80,7 @@ function renderMenuItem(control: Control): TemplateResult {
 
 @customElement('open-scd')
 @localized()
-export class OpenSCD extends Plugging(Editing(LitElement)) {
+export class OpenSCD extends Plugging(Editing(Configurating(LitElement))) {
   @query('#log')
   logUI!: Dialog;
 
