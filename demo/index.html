@@ -4,7 +4,7 @@
 <open-scd plugins='{"menu": [{"name": "Add plugins...", "translations": {"de": "Erweitern..."}, "icon": "extension", "active": true, "src": "/demo/AddPlugins.js"}, {"name": "Open File", "translations": {"de": "Datei öffnen"}, "icon": "folder_open", "active": true, "src": "https://openscd.github.io/oscd-open/oscd-open.js"}, {"name": "Save File", "translations": {"de": "Datei öffnen"}, "icon": "save", "active": true, "src": "https://openscd.github.io/oscd-save/oscd-save.js"}]}'></open-scd>
 
 <script type="module">
-import '../dist/open-scd.js';
+import '../dist/main.js';
 
 const editor = document.querySelector('open-scd');
 const params = (new URL(document.location)).searchParams;
