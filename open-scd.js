@@ -8932,6 +8932,32 @@ function isRemove(edit) {
     return (edit.parent === undefined && edit.node !== undefined);
 }
 
+/**
+ * Hashes `str` using the cyrb64 variant of
+ * https://github.com/bryc/code/blob/master/jshash/experimental/cyrb53.js
+ * @returns digest - a rather insecure hash, very quickly
+ */
+function cyrb64(str) {
+    /* eslint-disable no-bitwise */
+    let h1 = 0xdeadbeef;
+    let h2 = 0x41c6ce57;
+    /* eslint-disable-next-line no-plusplus */
+    for (let i = 0, ch; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 =
+        Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^
+            Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 =
+        Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^
+            Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return ((h2 >>> 0).toString(16).padStart(8, '0') +
+        (h1 >>> 0).toString(16).padStart(8, '0'));
+    /* eslint-enable no-bitwise */
+}
+
 function localAttributeName(attribute) {
     return attribute.includes(':') ? attribute.split(':', 2)[1] : attribute;
 }
@@ -9026,7 +9052,7 @@ function Editing(Base) {
         constructor(...args) {
             super(...args);
             this.history = [];
-            this.next = 0;
+            this.editCount = 0;
             /** The set of `XMLDocument`s currently loaded */
             this.docs = {};
             /** The name of the [[`doc`]] currently being edited */
@@ -9038,13 +9064,13 @@ function Editing(Base) {
             return this.docs[this.docName];
         }
         get last() {
-            return this.next - 1;
+            return this.editCount - 1;
         }
         get canUndo() {
             return this.last >= 0;
         }
         get canRedo() {
-            return this.next < this.history.length;
+            return this.editCount < this.history.length;
         }
         handleOpenDoc({ detail: { docName, doc } }) {
             this.docName = docName;
@@ -9052,16 +9078,16 @@ function Editing(Base) {
         }
         handleEditEvent(event) {
             const edit = event.detail;
-            this.history.splice(this.next);
+            this.history.splice(this.editCount);
             this.history.push({ undo: handleEdit(edit), redo: edit });
-            this.next += 1;
+            this.editCount += 1;
         }
         /** Undo the last `n` [[Edit]]s committed */
         undo(n = 1) {
             if (!this.canUndo || n < 1)
                 return;
             handleEdit(this.history[this.last].undo);
-            this.next -= 1;
+            this.editCount -= 1;
             if (n > 1)
                 this.undo(n - 1);
         }
@@ -9069,8 +9095,8 @@ function Editing(Base) {
         redo(n = 1) {
             if (!this.canRedo || n < 1)
                 return;
-            handleEdit(this.history[this.next].redo);
-            this.next += 1;
+            handleEdit(this.history[this.editCount].redo);
+            this.editCount += 1;
             if (n > 1)
                 this.redo(n - 1);
         }
@@ -9083,7 +9109,7 @@ function Editing(Base) {
     ], EditingElement.prototype, "history", void 0);
     __decorate([
         t$1()
-    ], EditingElement.prototype, "next", void 0);
+    ], EditingElement.prototype, "editCount", void 0);
     __decorate([
         t$1()
     ], EditingElement.prototype, "last", null);
@@ -9103,32 +9129,10 @@ function Editing(Base) {
 }
 
 const pluginTags = new Map();
-/**
- * Hashes `uri` using cyrb64 analogous to
- * https://github.com/bryc/code/blob/master/jshash/experimental/cyrb53.js .
- * @returns a valid customElement tagName containing the URI hash.
- */
+/** @returns a valid customElement tagName containing the URI hash. */
 function pluginTag(uri) {
-    if (!pluginTags.has(uri)) {
-        /* eslint-disable no-bitwise */
-        let h1 = 0xdeadbeef;
-        let h2 = 0x41c6ce57;
-        /* eslint-disable-next-line no-plusplus */
-        for (let i = 0, ch; i < uri.length; i++) {
-            ch = uri.charCodeAt(i);
-            h1 = Math.imul(h1 ^ ch, 2654435761);
-            h2 = Math.imul(h2 ^ ch, 1597334677);
-        }
-        h1 =
-            Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^
-                Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-        h2 =
-            Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^
-                Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-        pluginTags.set(uri, `oscd-p${(h2 >>> 0).toString(16).padStart(8, '0') +
-            (h1 >>> 0).toString(16).padStart(8, '0')}`);
-        /* eslint-enable no-bitwise */
-    }
+    if (!pluginTags.has(uri))
+        pluginTags.set(uri, `oscd-p${cyrb64(uri)}`);
     return pluginTags.get(uri);
 }
 function Plugging(Base) {
@@ -9366,7 +9370,7 @@ let OpenSCD = class OpenSCD extends Plugging(Editing(s$1)) {
                   ></mwc-tab>`)}
           </mwc-tab-bar>
           ${this.editor
-            ? n `<${o$1(this.editor)} docName="${this.docName || b}" .doc=${this.doc} locale="${this.locale}" .docs=${this.docs}></${o$1(this.editor)}>`
+            ? n `<${o$1(this.editor)} docName="${this.docName || b}" .doc=${this.doc} locale="${this.locale}" .docs=${this.docs} .editCount=${this.editCount}></${o$1(this.editor)}>`
             : b}
         </mwc-top-app-bar-fixed>
       </mwc-drawer>
@@ -9391,7 +9395,7 @@ let OpenSCD = class OpenSCD extends Plugging(Editing(s$1)) {
         >
       </mwc-dialog>
       <aside>
-        ${this.plugins.menu.map(plugin => n `<${o$1(pluginTag(plugin.src))} docName="${this.docName}" .doc=${this.doc} locale="${this.locale}" .docs=${this.docs}></${o$1(pluginTag(plugin.src))}>`)}
+        ${this.plugins.menu.map(plugin => n `<${o$1(pluginTag(plugin.src))} docName="${this.docName}" .doc=${this.doc} locale="${this.locale}" .docs=${this.docs} .editCount=${this.editCount}></${o$1(pluginTag(plugin.src))}>`)}
       </aside>`;
     }
 };
@@ -9403,8 +9407,9 @@ OpenSCD.styles = i$5 `
       left: 0;
       width: 0;
       height: 0;
-      opacity: 0;
       overflow: hidden;
+      margin: 0;
+      padding: 0;
     }
 
     abbr {
