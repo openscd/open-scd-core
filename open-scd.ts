@@ -23,6 +23,9 @@ import { isComplex, isInsert, isRemove, isUpdate } from './foundation.js';
 import { Editing, LogEntry } from './mixins/Editing.js';
 import { Plugging, pluginTag } from './mixins/Plugging.js';
 
+export { Plugging } from './mixins/Plugging.js';
+export { Editing } from './mixins/Editing.js';
+
 type Control = {
   icon: string;
   getName: () => string;
