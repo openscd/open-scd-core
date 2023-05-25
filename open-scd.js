@@ -9706,5 +9706,5 @@ OpenSCD = __decorate([
     localized()
 ], OpenSCD);
 
-export { OpenSCD };
+export { Editing, OpenSCD, Plugging };
 //# sourceMappingURL=open-scd.js.map
