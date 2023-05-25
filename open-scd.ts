@@ -4,6 +4,8 @@ import { html as staticHtml, unsafeStatic } from 'lit/static-html.js';
 
 import { configureLocalization, localized, msg, str } from '@lit/localize';
 
+import { spread } from '@open-wc/lit-helpers';
+
 import '@material/mwc-button';
 import '@material/mwc-dialog';
 import '@material/mwc-drawer';
@@ -21,7 +23,7 @@ import { allLocales, sourceLocale, targetLocales } from './locales.js';
 import { isComplex, isInsert, isRemove, isUpdate } from './foundation.js';
 
 import { Editing, LogEntry } from './mixins/Editing.js';
-import { Plugging, pluginTag } from './mixins/Plugging.js';
+import { Plugging, Plugin, pluginTag } from './mixins/Plugging.js';
 
 export { Plugging } from './mixins/Plugging.js';
 export { Editing } from './mixins/Editing.js';
@@ -36,6 +38,8 @@ type Control = {
 type RenderedPlugin = Control & { tagName: string };
 
 type LocaleTag = typeof allLocales[number];
+
+type PropertyType = string | boolean | number | object;
 
 const { getLocale, setLocale } = configureLocalization({
   sourceLocale,
@@ -231,6 +235,16 @@ export class OpenSCD extends Plugging(Editing(LitElement)) {
     </mwc-list-item>`;
   }
 
+  protected pluginProperties(_plugin: Plugin): { [key: string]: PropertyType } {
+    return {
+      '.editCount': this.editCount,
+      '.doc': this.doc,
+      '.locale': this.locale,
+      '.docName': this.docName,
+      '.docs': this.docs,
+    };
+  }
+
   render() {
     return html`<mwc-drawer
         class="mdc-theme--surface"
@@ -276,11 +290,9 @@ export class OpenSCD extends Plugging(Editing(LitElement)) {
             )}
           </mwc-tab-bar>
           ${this.editor
-            ? staticHtml`<${unsafeStatic(this.editor)} docName="${
-                this.docName || nothing
-              }" .doc=${this.doc} locale="${this.locale}" .docs=${
-                this.docs
-              } .editCount=${this.editCount}></${unsafeStatic(this.editor)}>`
+            ? staticHtml`<${unsafeStatic(this.editor)} ${spread(
+                this.pluginProperties(this.loadedPlugins.get(this.editor)!)
+              )}></${unsafeStatic(this.editor)}>`
             : nothing}
         </mwc-top-app-bar-fixed>
       </mwc-drawer>
@@ -307,13 +319,9 @@ export class OpenSCD extends Plugging(Editing(LitElement)) {
       <aside>
         ${this.plugins.menu.map(
           plugin =>
-            staticHtml`<${unsafeStatic(pluginTag(plugin.src))} docName="${
-              this.docName
-            }" .doc=${this.doc} locale="${this.locale}" .docs=${
-              this.docs
-            } .editCount=${this.editCount}></${unsafeStatic(
-              pluginTag(plugin.src)
-            )}>`
+            staticHtml`<${unsafeStatic(pluginTag(plugin.src))} ${spread(
+              this.pluginProperties(plugin)
+            )}></${unsafeStatic(pluginTag(plugin.src))}>`
         )}
       </aside>`;
   }
