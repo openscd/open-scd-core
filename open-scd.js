@@ -9304,9 +9304,17 @@ function Editing(Base) {
             super(...args);
             this.history = [];
             this.editCount = 0;
-            /** The set of `XMLDocument`s currently loaded */
+            /**
+             * The set of `XMLDocument`s currently loaded
+             *
+             * @prop {Record} docs - Record of loaded XML documents
+             */
             this.docs = {};
-            /** The name of the [[`doc`]] currently being edited */
+            /**
+             * The name of the [[`doc`]] currently being edited
+             *
+             * @prop {String} docName - name of the document that is currently being edited
+             */
             this.docName = '';
             this.addEventListener('oscd-open', this.handleOpenDoc);
             this.addEventListener('oscd-edit', event => this.handleEditEvent(event));
@@ -9397,6 +9405,9 @@ function Plugging(Base) {
         get loadedPlugins() {
             return __classPrivateFieldGet(this, _PluggingElement_loadedPlugins, "f");
         }
+        /**
+         * @prop {PluginSet} plugins - Set of plugins that are used by OpenSCD
+         */
         get plugins() {
             return __classPrivateFieldGet(this, _PluggingElement_plugins, "f");
         }
@@ -9463,6 +9474,15 @@ function renderMenuItem(control) {
     </mwc-list-item>
   `;
 }
+/**
+ *
+ * @description Outer Shell for OpenSCD.
+ *
+ * @cssprop --oscd-theme-primary Primary color for OpenSCD
+ * @cssprop --oscd-theme-app-bar-primary Primary color for OpenSCD appbar
+ *
+ * @tag open-scd
+ */
 let OpenSCD = class OpenSCD extends Plugging(Editing(s$2)) {
     constructor() {
         super();
@@ -9677,6 +9697,11 @@ OpenSCD.styles = i$5 `
     }
 
     mwc-top-app-bar-fixed {
+      --mdc-theme-primary: var(
+        --oscd-theme-app-bar-primary,
+        var(--oscd-theme-primary)
+      );
+
       --mdc-theme-text-disabled-on-light: rgba(255, 255, 255, 0.38);
     } /* hack to fix disabled icon buttons rendering black */
   `;
