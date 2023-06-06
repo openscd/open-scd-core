@@ -24,6 +24,7 @@ import { isComplex, isInsert, isRemove, isUpdate } from './foundation.js';
 
 import { Editing, LogEntry } from './mixins/Editing.js';
 import { Plugging, Plugin, pluginTag } from './mixins/Plugging.js';
+import { EventBus } from './event-bus.js';
 
 export { Plugging } from './mixins/Plugging.js';
 export { Editing } from './mixins/Editing.js';
@@ -217,10 +218,13 @@ export class OpenSCD extends Plugging(Editing(LitElement)) {
     e.preventDefault();
   }
 
+  public readonly eventBus: EventBus;
+
   constructor() {
     super();
     this.handleKeyPress = this.handleKeyPress.bind(this);
     document.addEventListener('keydown', this.handleKeyPress);
+    this.eventBus = new EventBus();
   }
 
   private renderLogEntry(entry: LogEntry) {
@@ -251,6 +255,7 @@ export class OpenSCD extends Plugging(Editing(LitElement)) {
       '.locale': this.locale,
       '.docName': this.docName,
       '.docs': this.docs,
+      '.eventBus': this.eventBus,
     };
   }
 

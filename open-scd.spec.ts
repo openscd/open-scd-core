@@ -1,6 +1,7 @@
 import { elementUpdated, expect } from '@open-wc/testing';
 
 import './open-scd.js';
+import { it } from 'node:test';
 import type { OpenSCD } from './open-scd.js';
 
 import { newEditEvent, newOpenEvent } from './foundation.js';
@@ -196,5 +197,15 @@ describe('with menu plugins loaded', () => {
     await elementUpdated(plugin);
 
     expect(plugin).to.have.property('editCount', 1);
+  });
+
+  it('sets the EventBus correctly', async () => {
+    expect(editor).to.have.property('eventBus');
+
+    const plugin: Element = Array.from(
+      editor.shadowRoot?.querySelectorAll('*') || []
+    ).find(e => isOscdPlugin(e.tagName))!;
+
+    expect(plugin).to.have.property('eventBus', editor.eventBus);
   });
 });
