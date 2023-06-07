@@ -9675,7 +9675,7 @@ let OpenSCD = class OpenSCD extends Plugging(Editing(s$2)) {
         >
       </mwc-dialog>
       <aside>
-        ${this.plugins.menu.map(plugin => n$1 `<${o$2(pluginTag(plugin.src))} ${spread(this.pluginProperties(plugin))}></${o$2(pluginTag(plugin.src))}>`)}
+        ${(this.plugins.menu || []).map(plugin => n$1 `<${o$2(pluginTag(plugin.src))} ${spread(this.pluginProperties(plugin))}></${o$2(pluginTag(plugin.src))}>`)}
       </aside>`;
     }
 };
