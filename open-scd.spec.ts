@@ -1,7 +1,6 @@
 import { elementUpdated, expect } from '@open-wc/testing';
 
 import './open-scd.js';
-import { it } from 'node:test';
 import type { OpenSCD } from './open-scd.js';
 
 import { newEditEvent, newOpenEvent } from './foundation.js';

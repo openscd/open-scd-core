@@ -9,6 +9,7 @@
 /locales.ts
 /locales
 /dist
+/doc
 /custom-elements.json
 /.tsbuildinfo
 /.rollup.cache
