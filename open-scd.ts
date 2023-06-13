@@ -25,6 +25,9 @@ import { isComplex, isInsert, isRemove, isUpdate } from './foundation.js';
 import { Editing, LogEntry } from './mixins/Editing.js';
 import { Plugging, Plugin, pluginTag } from './mixins/Plugging.js';
 
+export { Plugging } from './mixins/Plugging.js';
+export { Editing } from './mixins/Editing.js';
+
 type Control = {
   icon: string;
   getName: () => string;
@@ -82,6 +85,15 @@ function renderMenuItem(control: Control): TemplateResult {
   `;
 }
 
+/**
+ *
+ * @description Outer Shell for OpenSCD.
+ *
+ * @cssprop --oscd-theme-primary Primary color for OpenSCD
+ * @cssprop --oscd-theme-app-bar-primary Primary color for OpenSCD appbar
+ *
+ * @tag open-scd
+ */
 @customElement('open-scd')
 @localized()
 export class OpenSCD extends Plugging(Editing(LitElement)) {
@@ -314,7 +326,7 @@ export class OpenSCD extends Plugging(Editing(LitElement)) {
         >
       </mwc-dialog>
       <aside>
-        ${this.plugins.menu.map(
+        ${(this.plugins.menu || []).map(
           plugin =>
             staticHtml`<${unsafeStatic(pluginTag(plugin.src))} ${spread(
               this.pluginProperties(plugin)
@@ -340,6 +352,11 @@ export class OpenSCD extends Plugging(Editing(LitElement)) {
     }
 
     mwc-top-app-bar-fixed {
+      --mdc-theme-primary: var(
+        --oscd-theme-app-bar-primary,
+        var(--oscd-theme-primary)
+      );
+
       --mdc-theme-text-disabled-on-light: rgba(255, 255, 255, 0.38);
     } /* hack to fix disabled icon buttons rendering black */
   `;

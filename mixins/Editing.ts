@@ -1,3 +1,5 @@
+import { LitElement } from 'lit';
+
 import { property, state } from 'lit/decorators.js';
 
 import {
@@ -109,8 +111,27 @@ function handleEdit(edit: Edit): Edit {
 
 export type LogEntry = { undo: Edit; redo: Edit };
 
+export interface EditingMixin {
+  doc: XMLDocument;
+  history: LogEntry[];
+  editCount: number;
+  last: number;
+  canUndo: boolean;
+  canRedo: boolean;
+  docs: Record<string, XMLDocument>;
+  docName: string;
+  handleOpenDoc(evt: OpenEvent): void;
+  handleEditEvent(evt: EditEvent): void;
+  undo(n?: number): void;
+  redo(n?: number): void;
+}
+
+type ReturnConstructor = new (...args: any[]) => LitElement & EditingMixin;
+
 /** A mixin for editing a set of [[docs]] using [[EditEvent]]s */
-export function Editing<TBase extends LitElementConstructor>(Base: TBase) {
+export function Editing<TBase extends LitElementConstructor>(
+  Base: TBase
+): TBase & ReturnConstructor {
   class EditingElement extends Base {
     @state()
     /** The `XMLDocument` currently being edited */
@@ -119,39 +140,47 @@ export function Editing<TBase extends LitElementConstructor>(Base: TBase) {
     }
 
     @state()
-    protected history: LogEntry[] = [];
+    history: LogEntry[] = [];
 
     @state()
-    protected editCount: number = 0;
+    editCount: number = 0;
 
     @state()
-    protected get last(): number {
+    get last(): number {
       return this.editCount - 1;
     }
 
     @state()
-    protected get canUndo(): boolean {
+    get canUndo(): boolean {
       return this.last >= 0;
     }
 
     @state()
-    protected get canRedo(): boolean {
+    get canRedo(): boolean {
       return this.editCount < this.history.length;
     }
 
-    /** The set of `XMLDocument`s currently loaded */
+    /**
+     * The set of `XMLDocument`s currently loaded
+     *
+     * @prop {Record} docs - Record of loaded XML documents
+     */
     @state()
     docs: Record<string, XMLDocument> = {};
 
-    /** The name of the [[`doc`]] currently being edited */
+    /**
+     * The name of the [[`doc`]] currently being edited
+     *
+     * @prop {String} docName - name of the document that is currently being edited
+     */
     @property({ type: String, reflect: true }) docName = '';
 
-    protected handleOpenDoc({ detail: { docName, doc } }: OpenEvent) {
+    handleOpenDoc({ detail: { docName, doc } }: OpenEvent) {
       this.docName = docName;
       this.docs[this.docName] = doc;
     }
 
-    protected handleEditEvent(event: EditEvent) {
+    handleEditEvent(event: EditEvent) {
       const edit = event.detail;
       this.history.splice(this.editCount);
       this.history.push({ undo: handleEdit(edit), redo: edit });
