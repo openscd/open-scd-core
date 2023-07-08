@@ -43,40 +43,40 @@ fallback wizard is necessary to handle all elements e.g.: a generic XML editor
 #### Lifecycle
 
 ```txt
-┌─────────────────┐ ┌───────────┐┌─────────────────┐     ┃                                        
-│  Editor Plugin  │ │   Core    ││  Wizard Plugin  │     ┃  LEGEND                               
-└─────────────────┘ └───────────┘└─────────────────┘     ┃  ┌───────────┐                         
-         │                │               │              ┃  │  <name>   │   module with lifeline  
-         │                │               │              ┃  └─────┬─────┘                         
-         │                │◀───register───│              ┃        │                               
-         │───register────▶│               │              ┃        │                               
-         │                │               │              ┃        │                               
-         │   requests a   │               │              ┃        │                               
-         │───wizard for──▶│               │              ┃                                        
-         │    a given     │  asks wizard  │              ┃                                        
-         │                │───if it can ─▶│              ┃  ──<desc.>  ─▶    Initiated action     
-         │                │ handle given  │              ┃                                        
-         │                │               │              ┃                                        
-         │                │◀ ─ ─answer ─ ─│              ┃  ─ <answer>  ▶    Answer to an action  
-         │                │               │              ┃                                        
-         │                │   initiates   │              ┃                                        
-         │                │    wizard     │              ┃            ┌─┐                         
-         │                │───with the ──▶│              ┃            │ │                         
-         │                │     given    ┌┴┐             ┃            │ │                         
-         │                │    element   │ │             ┃            │ │    Internal process     
-         │                │              │ │wizarding    ┃            │ │                         
-         │                │              │ │process      ┃            │ │                         
-         │                │              │ │             ┃            └─┘                         
-         │                │              │ │             ┃                                        
-         │                │              └┬┘             ┃                                        
-         │                │               ├──┐           ┃                                        
-         │                │               │  │           ┃                                        
-         │                │               closes         ┃                                        
-         │                │               itself         ┃                                        
-         │                │               │  │           ┃                                        
-         │                │               ◀──┘           ┃                                        
-         │                │               │              ┃                                        
-         X                X               X              ┃                                                                                 
+┌─────────────────┐ ┌───────────┐┌─────────────────┐     ┃
+│  Editor Plugin  │ │   Core    ││  Wizard Plugin  │     ┃  LEGEND
+└─────────────────┘ └───────────┘└─────────────────┘     ┃  ┌───────────┐
+         │                │               │              ┃  │  <name>   │   module with lifeline
+         │                │               │              ┃  └─────┬─────┘
+         │                │◀───register───│              ┃        │
+         │───register────▶│               │              ┃        │
+         │                │               │              ┃        │
+         │   requests a   │               │              ┃        │
+         │───wizard for──▶│               │              ┃
+         │    a given     │  asks wizard  │              ┃
+         │                │───if it can ─▶│              ┃  ──<desc.>  ─▶    Initiated action
+         │                │ handle given  │              ┃
+         │                │               │              ┃
+         │                │◀ ─ ─answer ─ ─│              ┃  ─ <answer>  ▶    Answer to an action
+         │                │               │              ┃
+         │                │   initiates   │              ┃
+         │                │    wizard     │              ┃            ┌─┐
+         │                │───with the ──▶│              ┃            │ │
+         │                │     given    ┌┴┐             ┃            │ │
+         │                │    element   │ │             ┃            │ │    Internal process
+         │                │              │ │wizarding    ┃            │ │
+         │                │              │ │process      ┃            │ │
+         │                │              │ │             ┃            └─┘
+         │                │              │ │             ┃
+         │                │              └┬┘             ┃
+         │                │               ├──┐           ┃
+         │                │               │  │           ┃
+         │                │               closes         ┃
+         │                │               itself         ┃
+         │                │               │  │           ┃
+         │                │               ◀──┘           ┃
+         │                │               │              ┃
+         X                X               X              ┃
 ```
 
 ##### Registration
