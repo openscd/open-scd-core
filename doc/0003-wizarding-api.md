@@ -1,6 +1,6 @@
 # Wizarding API
 
-Date: 2023-07-07
+Date: 2023-07
 
 ## Status
 
