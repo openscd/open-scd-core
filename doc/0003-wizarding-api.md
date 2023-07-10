@@ -131,12 +131,12 @@ type WizardRequest = {
 }
 ```
 
-> **ℹ️ INFO:** you can find the up-to-date definitions here: <!-- TODO: file link -->
+> **ℹ️ INFO:** you can find the up-to-date definitions here: TODO: file link
 
 > **ℹ️ INFO**: More about other alternatives of requests: 
 > [Alternatives for Requests](#alternatives-of-requests)
 
-###### Finding Available Wizards
+##### Finding Available Wizards
 
 When `Core` receives one of the above mentioned events it will go and ask the
 wizards if they can handle the element and action.
@@ -144,7 +144,7 @@ It will call:
 - `CanInspect` if the event is `oscd-wizard-inspection-request` 
 - `CanCreate` if the event is `oscd-wizard-creation-request`.
 
-###### Initiation
+##### Initiation
 
 In case of inspection the wizard would get the element. 
 ```html
@@ -157,7 +157,7 @@ If we want to create a new element it will get the parent element and the new ta
 ```
 
 
-###### Wizarding Process
+##### Wizarding Process
 
 This part happens entirely in the wizard plugin. 
 It can modify the XML document or just display it in some user-friendly way.
@@ -180,7 +180,7 @@ tag names in the plugin description e.g: in a string array called `handledTags`.
 
 ```ts
 type WizardPlugin = Plugin & {
-	handledTags: string[];
+    handledTags: string[];
 }
 ```
 
