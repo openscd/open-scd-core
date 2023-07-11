@@ -28,67 +28,73 @@ In this section we define the lifecycle of a wizard plugin and describe each ste
 #### Structure
 
 ```txt
-┌──────────────────────────────────┐
-│Core                              │
-│   ┌─────────────┐┌─────────────┐ │
-│   │Editor Plugin││Wizard Plugin│ │
-│   └─────────────┘└─────────────┘ │
-└──────────────────────────────────┘
+┌─────────────────────────────────────────────────┐
+│Core                                             │
+│   ┌─────────────┐┌─────────────┐┌─────────────┐ │
+│   │Editor Plugin││Menu Plugin  ││Wizard Plugin│ │
+│   └─────────────┘└─────────────┘└─────────────┘ │
+└─────────────────────────────────────────────────┘
 ```
 
-We separate editors and wizards so that wizards can be used by other editors. 
-This, of course, could create a coupling between plugins, so a default or 
+We separate editors and wizards so that wizards can be used by other editors.
+This, of course, could create a coupling between plugins, so a default or
 fallback wizard is necessary to handle all elements e.g.: a generic XML editor
 
 #### Lifecycle
 
 ```txt
-┌─────────────────┐ ┌───────────┐┌─────────────────┐     ┃
-│  Editor Plugin  │ │   Core    ││  Wizard Plugin  │     ┃  LEGEND
-└─────────────────┘ └───────────┘└─────────────────┘     ┃  ┌───────────┐
-         │                │               │              ┃  │  <name>   │   module with lifeline
-         │                │               │              ┃  └─────┬─────┘
-         │                │◀───register───│              ┃        │
-         │───register────▶│               │              ┃        │
-         │                │               │              ┃        │
-         │   requests a   │               │              ┃        │
-         │───wizard for──▶│               │              ┃
-         │    a given     │  asks wizard  │              ┃
-         │                │───if it can ─▶│              ┃  ──<desc.>  ─▶    Initiated action
-         │                │ handle given  │              ┃
-         │                │               │              ┃
-         │                │◀ ─ ─answer ─ ─│              ┃  ─ <answer>  ▶    Answer to an action
-         │                │               │              ┃
-         │                │   initiates   │              ┃
-         │                │    wizard     │              ┃            ┌─┐
-         │                │───with the ──▶│              ┃            │ │
-         │                │     given    ┌┴┐             ┃            │ │
-         │                │    element   │ │             ┃            │ │    Internal process
-         │                │              │ │wizarding    ┃            │ │
-         │                │              │ │process      ┃            │ │
-         │                │              │ │             ┃            └─┘
-         │                │              │ │             ┃
-         │                │              └┬┘             ┃
-         │                │               ├──┐           ┃
-         │                │               │  │           ┃
-         │                │               closes         ┃
-         │                │               itself         ┃
-         │                │               │  │           ┃
-         │                │               ◀──┘           ┃
-         │                │               │              ┃
-         X                X               X              ┃
+┌─────────────────┐ ┌───────────┐┌─────────────────┐    ┃
+│  Editor Plugin  │ │   Core    ││  Wizard Plugin  │    ┃  LEGENDE
+└─────────────────┘ └───────────┘└─────────────────┘    ┃  ┌───────────┐
+         │                │               │             ┃  │  <name>   │   module with lifeline
+         │                │               │             ┃  └─────┬─────┘
+         │                │◀───register───│             ┃        │
+         │───register────▶│               │             ┃        │
+         │                │               │             ┃        │
+         │   requests a   │               │             ┃        │
+         │───wizard for──▶│               │             ┃
+         │    a given     │  asks wizard  │             ┃
+         │                │───if it can ─▶│             ┃  ──<desc.>  ───▶  Initiated action
+         │                │ handle given  │             ┃
+         │                │               │             ┃
+         │                │◀ ─ ─answer ─ ─│             ┃  ─ <answer>  ─ ▶  Answer to an action
+         │                │               │             ┃
+         │                │   initiates   │             ┃  ═══<name>═════▶  event
+         │                │    wizard     │             ┃
+         │                │───with the ──▶│             ┃            ┌─┐
+         │                │     given    ┌┴┐            ┃            │ │
+         │                │    element   │ │            ┃            │ │    Internal process
+         │                │              │ │wizarding   ┃            │ │
+         │                │              │ │process     ┃            │ │
+         │                │              │ │            ┃            │ │
+         │                │              │ │            ┃            └─┘
+         │                │              └┬┘            ┃
+         │                │               │             ┃
+         │                │◀════done══════│             ┃
+         │                │               │             ┃
+         │                │────close─────▶│             ┃
+         │                │               X             ┃
+         │                │                             ┃
+         │                │                             ┃
+         X                X                             ┃
 ```
 
 ##### Registration
 
-Registering a wizard plugin happens the same way as registering another plugin.
+Registering a wizard plugin happens the same way as registering another plugin by defining
+them in the `plugins` attribute of `open-scd`.
+
 We will add the wizard type to our `PluginSet`.
 ```diff
 - export type PluginSet = { menu: Plugin[]; editor: Plugin[] };
 + export type PluginSet = { menu: Plugin[]; editor: Plugin[], wizard: Plugin[] };
 ```
 
-Wizards must have two public static functions called `CanInspect` and `CanCreate`.
+A wizard has two capabilities:
+- inspection: view and/or edit an existing element
+- creation: create a new element under a parent element
+
+Wizards must have two public static functions called `canInspect` and `canCreate`.
 `Core` will call these functions when it tries to figure out which wizard supports
 the given element and action.
 ```ts
@@ -103,7 +109,7 @@ We request a wizard through events.
 For viewing and/or editing purposes we can request an inspection.  
 The event is called `oscd-wizard-inspection-request` and its details look like this:
 ```ts
-type WizardInspectionRequest = WizardRequest & {
+type WizardInspectionRequest = {
   element: Element,
 }
 ```
@@ -111,23 +117,9 @@ type WizardInspectionRequest = WizardRequest & {
 The other possible request is to create a new element under a parent element.  
 The event is called `oscd-wizard-creation-request` and its details look like this
 ```ts
-type WizardCreationRequest = WizardRequest & {
+type WizardCreationRequest = {
   parent: Element,
   tagName?: string,
-}
-```
-
-Both event detail can contain an additional `stuff` for flexibility. `stuff` can be something
-that the wizard defines for additional configurations (e.g.: display it in readonly mode),
-or the editor can provide additional information about the element.
-
-> **⚠️ WARNING:** Please only use `stuff` if there is no other way.
-> It creates a tight coupling with a specific wizard or editor and it cannot be
-> guaranteed that your expectation about the `stuff` will be met!
-
-```ts
-type WizardRequest = {
-	stuff?: unknown
 }
 ```
 
@@ -162,9 +154,11 @@ If we want to create a new element it will get the parent element and the new ta
 This part happens entirely in the wizard plugin. 
 It can modify the XML document or just display it in some user-friendly way.
 
-##### Self Closing
+##### Finishing
 
-The wizard decides when it is finished and closes itself. 
+The wizard decides when it is finished and informs `Core` through an event.
+
+At this point `Core` can decide if it wants to close the wizard.
 
 `Core` has always the possibility to close the wizard. 
 For example when clicking on the backdrop of a dialog.
@@ -200,11 +194,13 @@ In this definition there is only one event (`oscd-wizard-request`)
 and two different event details (`CreateRequest` and `EditRequest`).
 This way the plugins need to determine themselves which
 event they got by examining each request.
-With two different events plugins can listen on one or both and can be sure
+
+With two different events, plugins can listen on one or both events and can be sure
 which event they get without examining the event itself.
-Plugin developers may forget that they can get two different types of event details,
-but if we have two different events with always the same type of payload,
-there is nothing to forget.
+Additionally, two different actions usually have two different events.
+For example `click` and `scroll`.
+
+
 
 ----
 
@@ -217,6 +213,9 @@ The following documents influenced this ADR:
 
 
 
+## Out of Scope
+
+- Handling multiple active wizards
 
 ---
 ## Consequences
