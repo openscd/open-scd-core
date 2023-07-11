@@ -195,7 +195,7 @@ but we forget to change its configuration.
 
 ### Alternatives of Requests
 
-#### [wizard-event.ts  ↗](https://github.com/ca-d/open-scd-core/blob/add-wizards/foundation/wizard-event.ts) by Christian Dinkle
+#### [wizard-event.ts  ↗](https://github.com/ca-d/open-scd-core/blob/add-wizards/foundation/wizard-event.ts) by Christian Dinkel
 In this definition there is only one event (`oscd-wizard-request`)
 and two different event details (`CreateRequest` and `EditRequest`).
 This way the plugins need to determine themselves which
