@@ -1,4 +1,4 @@
-# OpenSCD Core should support Addons
+# OpenSCD Should be splitted up into multiple packages
 
 Date: 2023-06-05
 
