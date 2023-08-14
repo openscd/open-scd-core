@@ -1,6 +1,6 @@
 # OpenSCD Should be splitted up into multiple packages
 
-Date: 2023-06-05
+Date: 2023-14-08
 
 ## Status
 
