@@ -2,7 +2,9 @@ import { expect, fixture } from '@open-wc/testing';
 
 import { html } from 'lit';
 
-import { OpenSCD } from './open-scd.js';
+import './open-scd.js';
+
+import type { OpenSCD } from './open-scd.js';
 
 describe('Plugging Element', () => {
   let editor: OpenSCD;

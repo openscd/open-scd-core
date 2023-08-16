@@ -28,7 +28,9 @@ import {
   Update,
 } from './foundation.js';
 
-import { OpenSCD } from './open-scd.js';
+import './open-scd.js';
+
+import type { OpenSCD } from './open-scd.js';
 
 export namespace util {
   export const xmlAttributeName =
