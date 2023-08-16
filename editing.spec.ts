@@ -17,10 +17,6 @@ import {
   webUrl,
 } from 'fast-check';
 
-import { LitElement } from 'lit';
-
-import { customElement } from 'lit/decorators.js';
-
 import {
   Edit,
   Insert,
@@ -30,8 +26,9 @@ import {
   newOpenEvent,
   Remove,
   Update,
-} from '../foundation.js';
-import { Editing } from './Editing.js';
+} from './foundation.js';
+
+import { OpenSCD } from './open-scd.js';
 
 export namespace util {
   export const xmlAttributeName =
@@ -183,19 +180,14 @@ export namespace util {
       )
     );
   }
-
-  @customElement('editing-element')
-  export class EditingElement extends Editing(LitElement) {}
 }
 
 describe('Editing Element', () => {
-  let editor: util.EditingElement;
+  let editor: OpenSCD;
   let sclDoc: XMLDocument;
 
   beforeEach(async () => {
-    editor = <util.EditingElement>(
-      await fixture(html`<editing-element></editing-element>`)
-    );
+    editor = <OpenSCD>await fixture(html`<open-scd></open-scd>`);
     sclDoc = new DOMParser().parseFromString(
       util.sclDocString,
       'application/xml'

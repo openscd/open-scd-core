@@ -1,22 +1,14 @@
 import { expect, fixture } from '@open-wc/testing';
 
-import { html, LitElement } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { html } from 'lit';
 
-import { Plugging } from './Plugging.js';
-
-namespace util {
-  @customElement('plugging-element')
-  export class PluggingElement extends Plugging(LitElement) {}
-}
+import { OpenSCD } from './open-scd.js';
 
 describe('Plugging Element', () => {
-  let editor: util.PluggingElement;
+  let editor: OpenSCD;
 
   beforeEach(async () => {
-    editor = <util.PluggingElement>(
-      await fixture(html`<plugging-element></plugging-element>`)
-    );
+    editor = <OpenSCD>await fixture(html`<open-scd></open-scd>`);
   });
 
   it('loads menu plugins', () => {
