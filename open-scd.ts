@@ -20,13 +20,46 @@ import type { Drawer } from '@material/mwc-drawer';
 
 import { allLocales, sourceLocale, targetLocales } from './locales.js';
 
-import { isComplex, isInsert, isRemove, isUpdate } from './foundation.js';
+import {
+  AttributeValue,
+  cyrb64,
+  Edit,
+  EditEvent,
+  Insert,
+  isComplex,
+  isInsert,
+  isNamespaced,
+  isRemove,
+  isUpdate,
+  OpenEvent,
+  Remove,
+  Update,
+} from './foundation.js';
 
-import { Editing, LogEntry } from './mixins/Editing.js';
-import { Plugging, Plugin, pluginTag } from './mixins/Plugging.js';
+export type LogEntry = { undo: Edit; redo: Edit };
 
-export { Plugging } from './mixins/Plugging.js';
-export { Editing } from './mixins/Editing.js';
+export type Plugin = {
+  name: string;
+  translations?: Record<typeof targetLocales[number], string>;
+  src: string;
+  icon: string;
+  requireDoc?: boolean;
+  active?: boolean;
+};
+export type PluginSet = { menu: Plugin[]; editor: Plugin[] };
+
+const pluginTags = new Map<string, string>();
+
+/** @returns a valid customElement tagName containing the URI hash. */
+export function pluginTag(uri: string): string {
+  if (!pluginTags.has(uri)) pluginTags.set(uri, `oscd-p${cyrb64(uri)}`);
+  return pluginTags.get(uri)!;
+}
+
+export interface PluginMixin {
+  loadedPlugins: Map<string, Plugin>;
+  plugins: Partial<PluginSet>;
+}
 
 type Control = {
   icon: string;
@@ -85,6 +118,97 @@ function renderMenuItem(control: Control): TemplateResult {
   `;
 }
 
+function localAttributeName(attribute: string): string {
+  return attribute.includes(':') ? attribute.split(':', 2)[1] : attribute;
+}
+
+function handleInsert({
+  parent,
+  node,
+  reference,
+}: Insert): Insert | Remove | [] {
+  try {
+    const { parentNode, nextSibling } = node;
+    parent.insertBefore(node, reference);
+    if (parentNode)
+      return {
+        node,
+        parent: parentNode,
+        reference: nextSibling,
+      };
+    return { node };
+  } catch (e) {
+    // do nothing if insert doesn't work on these nodes
+    return [];
+  }
+}
+
+function handleUpdate({ element, attributes }: Update): Update {
+  const oldAttributes = { ...attributes };
+  Object.entries(attributes)
+    .reverse()
+    .forEach(([name, value]) => {
+      let oldAttribute: AttributeValue;
+      if (isNamespaced(value!))
+        oldAttribute = {
+          value: element.getAttributeNS(
+            value.namespaceURI,
+            localAttributeName(name)
+          ),
+          namespaceURI: value.namespaceURI,
+        };
+      else
+        oldAttribute = element.getAttributeNode(name)?.namespaceURI
+          ? {
+              value: element.getAttribute(name),
+              namespaceURI: element.getAttributeNode(name)!.namespaceURI!,
+            }
+          : element.getAttribute(name);
+      oldAttributes[name] = oldAttribute;
+    });
+  for (const entry of Object.entries(attributes)) {
+    try {
+      const [attribute, value] = entry as [string, AttributeValue];
+      if (isNamespaced(value)) {
+        if (value.value === null)
+          element.removeAttributeNS(
+            value.namespaceURI,
+            localAttributeName(attribute)
+          );
+        else element.setAttributeNS(value.namespaceURI, attribute, value.value);
+      } else if (value === null) element.removeAttribute(attribute);
+      else element.setAttribute(attribute, value);
+    } catch (e) {
+      // do nothing if update doesn't work on this attribute
+      delete oldAttributes[entry[0]];
+    }
+  }
+  return {
+    element,
+    attributes: oldAttributes,
+  };
+}
+
+function handleRemove({ node }: Remove): Insert | [] {
+  const { parentNode: parent, nextSibling: reference } = node;
+  node.parentNode?.removeChild(node);
+  if (parent)
+    return {
+      node,
+      parent,
+      reference,
+    };
+  return [];
+}
+
+function handleEdit(edit: Edit): Edit {
+  if (isInsert(edit)) return handleInsert(edit);
+  if (isUpdate(edit)) return handleUpdate(edit);
+  if (isRemove(edit)) return handleRemove(edit);
+  if (isComplex(edit)) return edit.map(handleEdit).reverse();
+  return [];
+}
+
 /**
  *
  * @description Outer Shell for OpenSCD.
@@ -96,7 +220,7 @@ function renderMenuItem(control: Control): TemplateResult {
  */
 @customElement('open-scd')
 @localized()
-export class OpenSCD extends Plugging(Editing(LitElement)) {
+export class OpenSCD extends LitElement {
   @query('#log')
   logUI!: Dialog;
 
@@ -217,10 +341,115 @@ export class OpenSCD extends Plugging(Editing(LitElement)) {
     e.preventDefault();
   }
 
+  @state()
+  /** The `XMLDocument` currently being edited */
+  get doc(): XMLDocument {
+    return this.docs[this.docName];
+  }
+
+  @state()
+  history: LogEntry[] = [];
+
+  @state()
+  editCount: number = 0;
+
+  @state()
+  get last(): number {
+    return this.editCount - 1;
+  }
+
+  @state()
+  get canUndo(): boolean {
+    return this.last >= 0;
+  }
+
+  @state()
+  get canRedo(): boolean {
+    return this.editCount < this.history.length;
+  }
+
+  /**
+   * The set of `XMLDocument`s currently loaded
+   *
+   * @prop {Record} docs - Record of loaded XML documents
+   */
+  @state()
+  docs: Record<string, XMLDocument> = {};
+
+  /**
+   * The name of the [[`doc`]] currently being edited
+   *
+   * @prop {String} docName - name of the document that is currently being edited
+   */
+  @property({ type: String, reflect: true }) docName = '';
+
+  handleOpenDoc({ detail: { docName, doc } }: OpenEvent) {
+    this.docName = docName;
+    this.docs[this.docName] = doc;
+  }
+
+  handleEditEvent(event: EditEvent) {
+    const edit = event.detail;
+    this.history.splice(this.editCount);
+    this.history.push({ undo: handleEdit(edit), redo: edit });
+    this.editCount += 1;
+  }
+
+  /** Undo the last `n` [[Edit]]s committed */
+  undo(n = 1) {
+    if (!this.canUndo || n < 1) return;
+    handleEdit(this.history[this.last!].undo);
+    this.editCount -= 1;
+    if (n > 1) this.undo(n - 1);
+  }
+
+  /** Redo the last `n` [[Edit]]s that have been undone */
+  redo(n = 1) {
+    if (!this.canRedo || n < 1) return;
+    handleEdit(this.history[this.editCount].redo);
+    this.editCount += 1;
+    if (n > 1) this.redo(n - 1);
+  }
+
+  #loadedPlugins = new Map<string, Plugin>();
+
+  @state()
+  get loadedPlugins(): Map<string, Plugin> {
+    return this.#loadedPlugins;
+  }
+
+  #plugins: PluginSet = { menu: [], editor: [] };
+
+  /**
+   * @prop {PluginSet} plugins - Set of plugins that are used by OpenSCD
+   */
+  @property({ type: Object })
+  get plugins(): PluginSet {
+    return this.#plugins;
+  }
+
+  set plugins(plugins: Partial<PluginSet>) {
+    Object.values(plugins).forEach(kind =>
+      kind.forEach(plugin => {
+        const tagName = pluginTag(plugin.src);
+        if (this.loadedPlugins.has(tagName)) return;
+        this.#loadedPlugins.set(tagName, plugin);
+        if (customElements.get(tagName)) return;
+        const url = new URL(plugin.src, window.location.href).toString();
+        import(url).then(mod => customElements.define(tagName, mod.default));
+      })
+    );
+
+    this.#plugins = { menu: [], editor: [], ...plugins };
+    this.requestUpdate();
+  }
+
   constructor() {
     super();
     this.handleKeyPress = this.handleKeyPress.bind(this);
     document.addEventListener('keydown', this.handleKeyPress);
+    this.addEventListener('oscd-open', this.handleOpenDoc);
+    this.addEventListener('oscd-edit', event => this.handleEditEvent(event));
   }
 
   private renderLogEntry(entry: LogEntry) {
